@@ -1,83 +1,80 @@
 #!/usr/bin/env python3
 """
-Module defining the UserRepository class for managing user storage and operations.
+Module defining the HBnBFacade class to manage user storage and operations.
 """
 
 from models.user import User
 from datetime import datetime
+from app.persistence.repository import InMemoryRepository
 
-
-class UserRepository:
+class HBnBFacade:
     """
-    Repository class for managing User instances.
+    Facade class to interact with the user repository.
     """
 
     def __init__(self):
         """
-        Initializes an empty user repository.
+        Initializes the Facade with an InMemoryRepository instance.
         """
-        self.users = {}
+        self.user_repo = InMemoryRepository()
 
     def create_user(self, user_data):
         """
-        Creates a new user if the email does not already exist in the repository.
+        Creates a new user and adds it to the repository.
+
         Args:
-            user_data (dict): Dictionary containing user details (first_name, last_name, email).
+            user_data (dict): Dictionary containing user details.
+
         Returns:
-            User: The newly created user or an existing user if the email is already in use.
+            User: The newly created user.
         """
-        for user in self.users.values():
-            if user.email == user_data['email']:
-                return user
-        new_user = User(
-            user_data['first_name'], 
-            user_data['last_name'], 
-            user_data['email']
-        )
-        self.users[new_user.id] = new_user
-        return new_user
+        user = User(**user_data)
+        self.user_repo.add(user)
+        return user
 
     def get_user(self, user_id):
         """
         Retrieves a user by their unique ID.
+
         Args:
             user_id (str): The unique identifier of the user.
+
         Returns:
             User or None: The user instance if found, otherwise None.
         """
-        return self.users.get(user_id, None)
-    
+        return self.user_repo.get(user_id)
+
     def get_user_by_email(self, email):
         """
         Retrieves a user by their email address.
+
         Args:
             email (str): The email address of the user.
+
         Returns:
             User or None: The user instance if found, otherwise None.
         """
-        if not email:
-            return None
-        for user in self.users.values():
-            if user.email == email:
-                return user
-        return None
+        return self.user_repo.get_by_attribute('email', email)
 
     def update_user(self, user_id, update_data):
         """
         Updates user attributes based on the provided data.
+
         Args:
             user_id (str): The unique identifier of the user to update.
             update_data (dict): Dictionary containing the attributes to update.
+
         Returns:
             User or None: The updated user instance if found, otherwise None.
         """
-        user = self.get_user(user_id)
+        user = self.user_repo.get(user_id)
         if user is None:
-            return None  
+            return None
 
         for key, value in update_data.items():
             if hasattr(user, key):
                 setattr(user, key, value)
 
         user.updated_at = datetime.utcnow()
+        self.user_repo.update(user)
         return user
