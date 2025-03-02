@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 """
-Module defining the HBnBFacade class to manage user, place, review, and amenity storage and operations.
+Module defining the HBnBFacade class to manage user, place, review, and
+amenity storage and operations.
 """
 
 from app.models.user import User
 from datetime import datetime
 from app.persistence.repository import InMemoryRepository
 
+
 class HBnBFacade:
     """
-    Facade class to interact with the repositories (User, Place, Review, Amenity).
+    Facade class to interact with the repositories (User, Place, Review,
+    Amenity).
     """
 
     def __init__(self):
         """
-        Initializes the Facade with separate InMemoryRepository instances for each entity.
+        Initializes the Facade with separate InMemoryRepository instances for
+        each entity.
         """
         self.user_repo = InMemoryRepository()
         self.place_repo = InMemoryRepository()
@@ -81,19 +85,43 @@ class HBnBFacade:
         user.updated_at = datetime.utcnow()
         self.user_repo.update(user)
         return user
-    
+
     def get_all_users(self):
         """Retrieves all users"""
         return self.user_repo.get_all()
 
-
     def create_place(self, place_data):
         """Creates a new place (logic to be implemented later)."""
-        pass
+        price = place_data.get("price")
+        latitude = place_data.get("latitude")
+        longitude = place_data.get("longitude")
+
+        if price is None or price < 0:
+            raise ValueError("Price must be a non-negative float")
+        if latitude is None or not (-90 <= latitude <= 90):
+            raise ValueError("Latitude must be between -90 and 90")
+        if longitude is None or not (-180 <= longitude <= 180):
+            raise ValueError("Longitude must be between -180 and 180")
+
+        place_data['id'] = "generated-id"
+        self.place_repo.add(place_data)
+        return place_data
 
     def get_place(self, place_id):
-        """Retrieves a place by its ID (logic to be implemented later)."""
-        pass
+        """Retrieves a place by its ID."""
+        return self.place_repo.get(place_id)
+
+    def get_all_places(self):
+        """Retrieves all place"""
+        return self.place_repo.get_all()
+
+    def update_place(self, place_id, place_data):
+        """Update a place"""
+        place = self.place_repo.get(place_id)
+        if not place:
+            return None
+        self.place_repo.update(place_id, place_data)
+        return {"message": "Place updated successfully"}, 200
 
     def create_review(self, review_data):
         """Creates a new review (logic to be implemented later)."""
