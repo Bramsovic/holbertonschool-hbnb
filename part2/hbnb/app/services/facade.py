@@ -93,7 +93,7 @@ class HBnBFacade:
 
     # Place methods
     def create_place(self, place_data):
-        """Creates a new place (logic to be implemented later)."""
+        """Creates a new place."""
         price = place_data.get("price")
         latitude = place_data.get("latitude")
         longitude = place_data.get("longitude")
