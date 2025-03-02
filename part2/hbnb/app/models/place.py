@@ -4,7 +4,8 @@ from .base_model import BaseModel
 class Place(BaseModel):
     """Represents a location might be rented"""
 
-    def __init__(self, title, description, price, latitude, longitude, owner):
+    def __init__(self, title, description, price, latitude,
+                 longitude, owner_id):
         super().__init__()
 
         if len(title) > 100:
@@ -21,7 +22,7 @@ class Place(BaseModel):
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner = owner
+        self.owner_id = owner_id
         self.reviews = []  # List to store related reviews
         self.amenities = []  # List to store related amenities
 
