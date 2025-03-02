@@ -6,6 +6,7 @@ Module defining the HBnBFacade class to manage user, place, review, and amenity 
 from app.models.user import User
 from datetime import datetime
 from app.persistence.repository import InMemoryRepository
+from app.models.amenity import Amenity
 
 class HBnBFacade:
     """
@@ -104,9 +105,58 @@ class HBnBFacade:
         pass
 
     def create_amenity(self, amenity_data):
-        """Creates a new amenity (logic to be implemented later)."""
-        pass
+        """
+        Creates a new amenity and adds it to the repository.
+
+        Args:
+            amenity_data (dict): Dictionary containing amenity details.
+
+        Returns:
+            Amenity: The newly created amenity.
+        """
+        amenity = Amenity(**amenity_data)
+        self.amenity_repo.add(amenity)
+        return amenity
 
     def get_amenity(self, amenity_id):
-        """Retrieves an amenity by its ID (logic to be implemented later)."""
-        pass
+        """
+        Retrieves an amenity by its unique ID.
+
+        Args:
+            amenity_id (str): The unique identifier of the amenity.
+
+        Returns:
+            Amenity or None: The amenity instance if found, otherwise None.
+        """
+        return self.amenity_repo.get(amenity_id)
+
+    def get_all_amenities(self):
+        """
+        Retrieves all amenities from the repository.
+
+        Returns:
+            list: A list of all Amenity instances.
+        """
+        return self.amenity_repo.get_all()
+
+    def update_amenity(self, amenity_id, amenity_data):
+        """
+        Updates an amenity's attributes based on the provided data.
+
+        Args:
+            amenity_id (str): The unique identifier of the amenity to update.
+            amenity_data (dict): Dictionary containing the attributes to update.
+
+        Returns:
+            Amenity or None: The updated amenity instance if found, otherwise None.
+        """
+        amenity = self.amenity_repo.get(amenity_id)
+        if amenity is None:
+            return None
+
+        for key, value in amenity_data.items():
+            if hasattr(amenity, key):
+                setattr(amenity, key, value)
+
+        self.amenity_repo.update(amenity, amenity_data)
+        return amenity
