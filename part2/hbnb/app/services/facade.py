@@ -93,7 +93,20 @@ class HBnBFacade:
 
     # Place methods
     def create_place(self, place_data):
-        """Creates a new place."""
+        """
+        Creates a new place.
+
+        Args:
+            place_data (dict): Dictionary containing place details.
+
+        Raises:
+            ValueError: For negative float price.
+            ValueError: For latitude outside of -90 to 90.
+            ValueError: For longitude outside of -180 to 180.
+
+        Returns:
+            place: The newly created place.
+        """
         price = place_data.get("price")
         latitude = place_data.get("latitude")
         longitude = place_data.get("longitude")
@@ -110,15 +123,37 @@ class HBnBFacade:
         return place
 
     def get_place(self, place_id):
-        """Retrieves a place by its ID."""
+        """
+        Retrieves a place by its ID.
+
+        Args:
+            place_id (str): The unique identifier of the place.
+
+        Returns:
+            place: The place instance if found.
+        """
         return self.place_repo.get(place_id)
 
     def get_all_places(self):
-        """Retrieves all place"""
+        """
+        Retrieves all place.
+
+        Returns:
+            place: The place instance if found.
+        """
         return self.place_repo.get_all()
 
     def update_place(self, place_id, place_data):
-        """Update a place"""
+        """
+        Update a place.
+
+        Args:
+            place_id (str): The unique identifier of the place.
+            place_data (dict): Dictionary containing place details.
+
+        Returns:
+            place or None: The updated place instance if found, otherwise None.
+        """
         place = self.place_repo.get(place_id)
         if not place:
             return None
