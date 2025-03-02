@@ -3,7 +3,7 @@ from .base_model import BaseModel
 
 class Place(BaseModel):
     """Represents a location might be rented"""
-    
+
     def __init__(self, title, description, price, latitude, longitude, owner):
         super().__init__()
 
@@ -15,7 +15,7 @@ class Place(BaseModel):
             raise ValueError("Latitude must be between -90 and 90")
         if not (-180 <= longitude <= 180):
             raise ValueError("Longitude must be between -180 and 180")
-        
+
         self.title = title
         self.description = description
         self.price = price
