@@ -5,6 +5,7 @@ amenity storage and operations.
 """
 
 from app.models.user import User
+from app.models.place import Place
 from datetime import datetime
 from app.persistence.repository import InMemoryRepository
 
@@ -90,6 +91,7 @@ class HBnBFacade:
         """Retrieves all users"""
         return self.user_repo.get_all()
 
+    # Place methods
     def create_place(self, place_data):
         """Creates a new place (logic to be implemented later)."""
         price = place_data.get("price")
@@ -103,9 +105,9 @@ class HBnBFacade:
         if longitude is None or not (-180 <= longitude <= 180):
             raise ValueError("Longitude must be between -180 and 180")
 
-        place_data['id'] = "generated-id"
-        self.place_repo.add(place_data)
-        return place_data
+        place = Place(**place_data)
+        self.place_repo.add(place)
+        return place
 
     def get_place(self, place_id):
         """Retrieves a place by its ID."""
@@ -120,7 +122,10 @@ class HBnBFacade:
         place = self.place_repo.get(place_id)
         if not place:
             return None
-        self.place_repo.update(place_id, place_data)
+        for key, value in place_data.items():
+            if hasattr(place, key):
+                setattr(place, key, value)
+        self.place_repo.update(place)
         return {"message": "Place updated successfully"}, 200
 
     def create_review(self, review_data):
