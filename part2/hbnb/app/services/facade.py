@@ -160,8 +160,8 @@ class HBnBFacade:
         for key, value in place_data.items():
             if hasattr(place, key):
                 setattr(place, key, value)
-        self.place_repo.update(place)
-        return {"message": "Place updated successfully"}, 200
+        self.place_repo.update(place_id, place.to_dict())
+        return place.to_dict()
 
     def create_review(self, review_data):
         """Creates a new review (logic to be implemented later)."""
