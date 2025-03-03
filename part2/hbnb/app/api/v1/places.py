@@ -41,14 +41,31 @@ class PlaceList(Resource):
         data = api.payload
         try:
             place = facade.create_place(data)
-            return place, 201
+            return {
+                'id': place.id,
+                'title': place.title,
+                'description': place.description,
+                'price': place.price,
+                'latitude': place.latitude,
+                'longitude': place.longitude,
+                'owner_id': place.owner_id,
+            }, 201
         except ValueError as error:
             return {"error": str(error)}, 400
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
         """Retrieve a list of all places"""
-        return facade.get_all_places(), 200
+        place = facade.get_all_places()
+        return [{
+                'id': plc.id,
+                'title': plc.title,
+                'description': plc.description,
+                'price': plc.price,
+                'latitude': plc.latitude,
+                'longitude': plc.longitude,
+                'owner_id': plc.owner_id,
+                } for plc in place], 200
 
 
 @api.route('/<place_id>')
@@ -59,7 +76,15 @@ class PlaceResource(Resource):
         """Get place details by ID"""
         place = facade.get_place(place_id)
         if place:
-            return place, 200
+            return {
+                'id': place.id,
+                'title': place.title,
+                'description': place.description,
+                'price': place.price,
+                'latitude': place.latitude,
+                'longitude': place.longitude,
+                'owner_id': place.owner_id,
+                }, 200
         return {"Error": "Place not found"}, 404
 
     @api.expect(place_model)
@@ -71,7 +96,7 @@ class PlaceResource(Resource):
         data = api.payload
         try:
             update_place = facade.update_place(place_id, data)
-            if update_place:
+            if update_place is not None:
                 return {"Message": "Place updated successfully"}, 200
             return {"Error": "Place not found"}, 404
         except ValueError as error:
