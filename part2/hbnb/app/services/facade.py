@@ -169,14 +169,11 @@ class HBnBFacade:
         """Creates a new review."""
         user_id = review_data.get("user_id")
         place_id = review_data.get("place_id")
-        rating = review_data.get("rating")
 
-        if not self.user_repo.get(user_id):
-            raise ValueError("User does not exist")
         if not self.place_repo.get(place_id):
             raise ValueError("Place does not exist")
-        if rating < 1 or rating > 5:
-            raise ValueError("Rating must be between 1 and 5")
+        if not self.user_repo.get(user_id):
+            raise ValueError("User does not exist")
 
         return self.review_repo.add(review_data)
 
@@ -204,9 +201,6 @@ class HBnBFacade:
         if "text" in review_data:
             review.text = review_data["text"]
         if "rating" in review_data:
-            review.rating = review_data["rating"]
-            if not 1 <= review.rating <= 5:
-                raise ValueError("Rating must be between 1 and 5")
             review.rating = review_data["rating"]
 
         return self.review_repo.update(review_id)
