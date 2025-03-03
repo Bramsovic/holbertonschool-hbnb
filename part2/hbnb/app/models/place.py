@@ -33,3 +33,15 @@ class Place(BaseModel):
     def add_amenity(self, amenity):
         """Add an amenity to the list of place amenities"""
         self.amenities.append(amenity)
+
+    def to_dict(self):
+        """Convert the Place object to a dictionary"""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'price': self.price,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'owner_id': self.owner_id,
+        }
