@@ -85,7 +85,7 @@ class HBnBFacade:
                 setattr(user, key, value)
 
         user.updated_at = datetime.utcnow()
-        self.user_repo.update(user)
+        self.user_repo.update(user_id, update_data) 
         return user
 
     def get_all_users(self):
