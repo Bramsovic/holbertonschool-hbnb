@@ -164,13 +164,59 @@ class HBnBFacade:
         self.place_repo.update(place_id, place.to_dict())
         return place.to_dict()
 
+    # Review methods
     def create_review(self, review_data):
-        """Creates a new review (logic to be implemented later)."""
-        pass
+        """Creates a new review."""
+        user_id = review_data.get("user_id")
+        place_id = review_data.get("place_id")
+        rating = review_data.get("rating")
+
+        if not self.user_repo.get(user_id):
+            raise ValueError("User does not exist")
+        if not self.place_repo.get(place_id):
+            raise ValueError("Place does not exist")
+        if rating < 1 or rating > 5:
+            raise ValueError("Rating must be between 1 and 5")
+
+        return self.review_repo.add(review_data)
 
     def get_review(self, review_id):
-        """Retrieves a review by its ID (logic to be implemented later)."""
-        pass
+        """Retrieves a review by its ID."""
+        review = self.review_repo.get(review_id)
+        if not review:
+            raise ValueError("Review does not exist")
+        return review
+
+    def get_all_reviews(self):
+        """Retrieves all reviews."""
+        return self.review_repo.get_all()
+
+    def get_reviews_by_place(self, place_id):
+        """Retrieves all reviews for a place."""
+        return self.review_repo.get_by_attribute("place_id", place_id)
+
+    def update_review(self, review_id, review_data):
+        """Updates a review."""
+        review = self.review_repo.get(review_id)
+        if not review:
+            raise ValueError("Review does not exist")
+
+        if "text" in review_data:
+            review.text = review_data["text"]
+        if "rating" in review_data:
+            review.rating = review_data["rating"]
+            if not 1 <= review.rating <= 5:
+                raise ValueError("Rating must be between 1 and 5")
+            review.rating = review_data["rating"]
+
+        return self.review_repo.update(review_id)
+
+    def delete_review(self, review_id):
+        """Deletes a review."""
+        review = self.review_repo.get(review_id)
+        if not review:
+            raise ValueError("Review does not exist")
+        return self.review_repo.delete(review_id)
 
     def create_amenity(self, amenity_data):
         """
@@ -213,10 +259,12 @@ class HBnBFacade:
 
         Args:
             amenity_id (str): The unique identifier of the amenity to update.
-            amenity_data (dict): Dictionary containing the attributes to update.
+            amenity_data (dict): Dictionary containing
+            the attributes to update.
 
         Returns:
-            Amenity or None: The updated amenity instance if found, otherwise None.
+            Amenity or None: The updated amenity instance if found,
+            otherwise None.
         """
         amenity = self.amenity_repo.get(amenity_id)
         if amenity is None:
