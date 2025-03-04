@@ -21,6 +21,21 @@ class ReviewList(Resource):
     def post(self):
         """Register a new review"""
         data = api.payload
+        users = facade.get_all_users()
+        places = facade.get_all_places()
+
+        for user in users:
+            if user.id == data['user_id']:
+                break
+        else:
+            return {'message': 'User does not exist'}, 400
+
+        for place in places:
+            if place.id == data['place_id']:
+                break
+        else:
+            return {'message': 'Place does not exist'}, 400
+
         review = facade.create_review(data)
         if not review:
             return {'message': 'Invalid input data'}, 400
