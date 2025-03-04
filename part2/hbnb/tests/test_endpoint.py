@@ -107,9 +107,11 @@ class TestHBnBEndpoints(unittest.TestCase):
         """Test creating a new place."""
         response = self.client.post('/api/v1/places/', json={
             "title": "Beautiful house",
+            "description": "A nice place to stay",
             "price": 100,
             "latitude": 48.8566,
-            "longitude": 2.3522
+            "longitude": 2.3522,
+            "owner_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         })
         self.assertEqual(response.status_code, 201)
 
@@ -117,9 +119,11 @@ class TestHBnBEndpoints(unittest.TestCase):
         """Test creating a place with an invalid price."""
         response = self.client.post('/api/v1/places/', json={
             "title": "House",
+            "description": "A nice place to stay",
             "price": -50,
             "latitude": 48.8566,
-            "longitude": 2.3522
+            "longitude": 2.3522,
+            "owner_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         })
         self.assertEqual(response.status_code, 400)
 
