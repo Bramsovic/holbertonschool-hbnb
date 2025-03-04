@@ -6,6 +6,7 @@ amenity storage and operations.
 
 from app.models.user import User
 from app.models.place import Place
+from app.models.review import Review
 from datetime import datetime
 from app.persistence.repository import InMemoryRepository
 from app.models.amenity import Amenity
@@ -162,20 +163,14 @@ class HBnBFacade:
             if hasattr(place, key):
                 setattr(place, key, value)
         self.place_repo.update(place_id, place.to_dict())
-        return place.to_dict()
+        return place
 
     # Review methods
     def create_review(self, review_data):
         """Creates a new review."""
-        user_id = review_data.get("user_id")
-        place_id = review_data.get("place_id")
-
-        if not self.place_repo.get(place_id):
-            raise ValueError("Place does not exist")
-        if not self.user_repo.get(user_id):
-            raise ValueError("User does not exist")
-
-        return self.review_repo.add(review_data)
+        review = Review(**review_data)
+        self.review_repo.add(review)
+        return review
 
     def get_review(self, review_id):
         """Retrieves a review by its ID."""
