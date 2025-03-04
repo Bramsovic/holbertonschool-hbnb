@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Module defining the UserRepository class for managing user storage and retrieval.
+Module defining the UserRepository class for
+managing user storage and retrieval.
 """
 
 from datetime import datetime
 from abc import ABC, abstractmethod
-from app.models.user import User
 
 
 class Repository(ABC):
@@ -40,7 +40,8 @@ class Repository(ABC):
 
 class InMemoryRepository(Repository):
     """
-    Concrete implementation of the Repository class for storing and managing User instances in-memory.
+    Concrete implementation of the Repository class for storing
+    and managing User instances in-memory.
     """
 
     def __init__(self):
@@ -125,4 +126,5 @@ class InMemoryRepository(Repository):
         Returns:
             User or None: The user instance if found, otherwise None.
         """
-        return next((user for user in self._storage.values() if getattr(user, attr_name, None) == attr_value), None)
+        return next((user for user in self._storage.values() if
+                     getattr(user, attr_name, None) == attr_value), None)

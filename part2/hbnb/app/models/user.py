@@ -9,13 +9,15 @@ from datetime import datetime
 
 class User(BaseModel):
     """
-    Represents a system user with personal information, timestamps, and relationships.
-    
+    Represents a system user with personal
+    information, timestamps, and relationships.
+
     Attributes:
         first_name (str): First name of the user.
         last_name (str): Last name of the user.
         email (str): User's email address.
-        is_admin (bool): Indicates whether the user has administrative privileges.
+        is_admin (bool): Indicates whether
+        the user has administrative privileges.
         places (list): List of places owned by the user.
     """
 
@@ -27,12 +29,14 @@ class User(BaseModel):
             first_name (str): First name of the user (max 50 chars).
             last_name (str): Last name of the user (max 50 chars).
             email (str): User's email address.
-            is_admin (bool, optional): Indicates if the user is an admin. Defaults to False.
+            is_admin (bool, optional): Indicates if the user
+            is an admin. Defaults to False.
         """
         super().__init__()  # Call parent to generate UUID & timestamps
 
         if len(first_name) > 50 or len(last_name) > 50:
-            raise ValueError("First and last names must be less than 50 characters")
+            raise ValueError(
+                "First and last names must be less than 50 characters")
 
         self.first_name = first_name
         self.last_name = last_name
