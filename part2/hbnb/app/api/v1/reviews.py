@@ -21,31 +21,27 @@ class ReviewList(Resource):
     def post(self):
         """Register a new review"""
         data = api.payload
-        users = facade.get_all_users()
-        places = facade.get_all_places()
+        user = facade.get_user(data['user_id'])
+        place = facade.get_place(data['place_id'])
 
-        for user in users:
-            if user.id == data['user_id']:
-                break
-        else:
+        if user is None:
             return {'message': 'User does not exist'}, 400
 
-        for place in places:
-            if place.id == data['place_id']:
-                break
-        else:
+        if place is None:
             return {'message': 'Place does not exist'}, 400
 
-        review = facade.create_review(data)
-        if not review:
-            return {'message': 'Invalid input data'}, 400
-        return {
-            'id': review.id,
-            'text': review.text,
-            'rating': review.rating,
-            'user_id': review.user_id,
-            'place_id': review.place_id
-            }, 201
+        try:
+            review = facade.create_review(data)
+            place.add_review(review.id)
+            return {
+                'id': review.id,
+                'text': review.text,
+                'rating': review.rating,
+                'user_id': review.user_id,
+                'place_id': review.place_id
+                }, 201
+        except ValueError as error:
+            return {'message': str(error)}, 400
 
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
