@@ -87,13 +87,7 @@ class ReviewResource(Resource):
             return {'message': 'Review not found'}, 404
         if not updated:
             return {'message': 'Invalid input data'}, 400
-        return {
-            'id': updated.id,
-            'text': updated.text,
-            'rating': updated.rating,
-            'user_id': updated.user_id,
-            'place_id': updated.place_id
-            }, 200
+        return {"message": "Review updated successfully"}, 200
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
