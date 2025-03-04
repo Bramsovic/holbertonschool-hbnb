@@ -1,7 +1,9 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from app.api.v1 import users
 
 api = Namespace('reviews', description='Review operations')
+
 
 # Define the review model for input validation and documentation
 review_model = api.model('Review', {
@@ -21,7 +23,7 @@ class ReviewList(Resource):
     def post(self):
         """Register a new review"""
         data = api.payload
-        user = facade.get_user(data['user_id'])
+        user = users.facade.get_user(data['user_id'])
         place = facade.get_place(data['place_id'])
 
         if user is None:
