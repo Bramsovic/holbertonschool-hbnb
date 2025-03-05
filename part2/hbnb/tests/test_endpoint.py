@@ -1,6 +1,7 @@
 import unittest
 from app import create_app
 
+
 class TestHBnBEndpoints(unittest.TestCase):
 
     def setUp(self):
@@ -35,13 +36,25 @@ class TestHBnBEndpoints(unittest.TestCase):
 
     def test_get_user_by_id(self):
         """Test retrieving an existing user by ID."""
-        user_id = 1  
+        # Creating an user
+        response = self.client.post('/api/v1/users/', json={
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "email": "jane.doe@example.com"
+        })
+        self.assertEqual(response.status_code, 201)
+
+        # Get the ID of the user created
+        user_id = response.json.get('id')
+        self.assertIsNotNone(user_id)  # Vérifier que l'ID existe
+
+        # Try to get the user
         response = self.client.get(f'/api/v1/users/{user_id}')
         self.assertEqual(response.status_code, 200)
 
     def test_get_user_by_invalid_id(self):
         """Test retrieving a user with an invalid ID."""
-        user_id = 9999 
+        user_id = 9999
         response = self.client.get(f'/api/v1/users/{user_id}')
         self.assertEqual(response.status_code, 404)
 
@@ -70,8 +83,8 @@ class TestHBnBEndpoints(unittest.TestCase):
         """Test creating a review with valid data."""
         response = self.client.post('/api/v1/reviews/', json={
             "text": "Great place!",
-            "user_id": 1,  
-            "place_id": 1 
+            "user_id": 1,
+            "place_id": 1
         })
         self.assertEqual(response.status_code, 201)
 
@@ -91,13 +104,25 @@ class TestHBnBEndpoints(unittest.TestCase):
 
     def test_get_review_by_id(self):
         """Test retrieving a review by ID."""
-        review_id = 1 
+        # Create an review
+        response = self.client.post('/api/v1/reviews/', json={
+            "text": "Great place!",
+            "user_id": 1,
+            "place_id": 1
+        })
+        self.assertEqual(response.status_code, 201)
+
+        # Get the ID of the review created
+        review_id = response.json.get('id')
+        self.assertIsNotNone(review_id)  # Vérifier que l'ID existe
+
+        # Get the Review with the ID
         response = self.client.get(f'/api/v1/reviews/{review_id}')
         self.assertEqual(response.status_code, 200)
 
     def test_get_review_by_invalid_id(self):
         """Test retrieving a review with an invalid ID."""
-        review_id = 9999  
+        review_id = 9999
         response = self.client.get(f'/api/v1/reviews/{review_id}')
         self.assertEqual(response.status_code, 404)
 
@@ -134,15 +159,31 @@ class TestHBnBEndpoints(unittest.TestCase):
 
     def test_get_place_by_id(self):
         """Test retrieving a place by ID."""
-        place_id = 1  
+        # Create a place
+        response = self.client.post('/api/v1/places/', json={
+            "title": "Beautiful house",
+            "description": "A nice place to stay",
+            "price": 100,
+            "latitude": 48.8566,
+            "longitude": 2.3522,
+            "owner_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        })
+        self.assertEqual(response.status_code, 201)
+
+        # Get the ID of the place created
+        place_id = response.json.get('id')
+        self.assertIsNotNone(place_id)
+
+        # Get the place with the ID
         response = self.client.get(f'/api/v1/places/{place_id}')
         self.assertEqual(response.status_code, 200)
 
     def test_get_place_by_invalid_id(self):
         """Test retrieving a place with an invalid ID."""
-        place_id = 9999 
+        place_id = 9999
         response = self.client.get(f'/api/v1/places/{place_id}')
         self.assertEqual(response.status_code, 404)
+
 
 if __name__ == '__main__':
     unittest.main()
