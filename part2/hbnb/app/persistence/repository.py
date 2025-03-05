@@ -126,5 +126,5 @@ class InMemoryRepository(Repository):
         Returns:
             User or None: The user instance if found, otherwise None.
         """
-        return next((user for user in self._storage.values() if
-                     getattr(user, attr_name, None) == attr_value), None)
+        return [obj for obj in self._storage.values()
+                if getattr(obj, attr_name, None) == attr_value]
