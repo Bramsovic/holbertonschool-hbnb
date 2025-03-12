@@ -6,8 +6,9 @@ from app.api.v1.amenities import api as amenity_ns
 from app.api.v1.reviews import api as review_ns
 
 
-def create_app():
+def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
+    app.config.from_object(config_class)
 
     # Initialisation de l'API Flask-RESTx
     api = Api(app, version='1.0', title='HBnB API',
