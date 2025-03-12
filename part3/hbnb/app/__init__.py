@@ -4,10 +4,16 @@ from app.api.v1.places import api as place_ns
 from app.api.v1.users import api as user_ns
 from app.api.v1.amenities import api as amenity_ns
 from app.api.v1.reviews import api as review_ns
+import config
+from flask_bcrypt import Bcrypt
+
+bcrypt = Bcrypt()
 
 
-def create_app():
+def create_app(config_class=config.DevelopmentConfig):
     app = Flask(__name__)
+    app.config.from_object(config_class)
+    bcrypt.init_app(app)
 
     # Initialisation de l'API Flask-RESTx
     api = Api(app, version='1.0', title='HBnB API',

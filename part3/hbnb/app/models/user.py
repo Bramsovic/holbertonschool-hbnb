@@ -21,7 +21,7 @@ class User(BaseModel):
         places (list): List of places owned by the user.
     """
 
-    def __init__(self, first_name, last_name, email, is_admin=False):
+    def __init__(self, first_name, last_name, email, password, is_admin=False):
         """
         Initializes a new user with a unique ID and personal information.
 
@@ -41,6 +41,7 @@ class User(BaseModel):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
+        self.password = password
         self.is_admin = is_admin
         self.places = []  # List to store places owned by the user
 
@@ -58,3 +59,18 @@ class User(BaseModel):
         Updates the `updated_at` timestamp to the current time.
         """
         self.updated_at = datetime.utcnow()
+
+    @classmethod
+    def hash_password(self, password):
+        """
+        Hashes the password before storing it.
+        """
+        from app import bcrypt
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def verify_password(self, password):
+        """
+        Verifies if the provided password matches the hashed password.
+        """
+        from app import bcrypt
+        return bcrypt.check_password_hash(self.password, password)
