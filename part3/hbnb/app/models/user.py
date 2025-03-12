@@ -5,7 +5,6 @@ Module defining the User class for managing user information.
 
 from .base_model import BaseModel
 from datetime import datetime
-from app import bcrypt
 
 
 class User(BaseModel):
@@ -61,14 +60,17 @@ class User(BaseModel):
         """
         self.updated_at = datetime.utcnow()
 
+    @classmethod
     def hash_password(self, password):
         """
         Hashes the password before storing it.
         """
+        from app import bcrypt
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def verify_password(self, password):
         """
         Verifies if the provided password matches the hashed password.
         """
+        from app import bcrypt
         return bcrypt.check_password_hash(self.password, password)
