@@ -9,9 +9,11 @@ from app.api.v1.protected import api as protected_ns
 import config
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from flask_sqlalchemy import SQLAlchemy
 
 bcrypt = Bcrypt()
 jwt = JWTManager()
+db = SQLAlchemy()
 
 
 def create_app(config_class=config.DevelopmentConfig):
@@ -32,5 +34,6 @@ def create_app(config_class=config.DevelopmentConfig):
     # be added later
     bcrypt.init_app(app)
     jwt.init_app(app)
+    db.init_app(app)
 
     return app
