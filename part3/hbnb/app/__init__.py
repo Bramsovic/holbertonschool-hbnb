@@ -13,10 +13,10 @@ from flask_jwt_extended import JWTManager
 bcrypt = Bcrypt()
 jwt = JWTManager()
 
+
 def create_app(config_class=config.DevelopmentConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
-    bcrypt.init_app(app)
 
     # Initialisation de l'API Flask-RESTx
     api = Api(app, version='1.0', title='HBnB API',
@@ -30,6 +30,7 @@ def create_app(config_class=config.DevelopmentConfig):
     api.add_namespace(protected_ns, path='/api/v1')
     # Additional namespaces for places, reviews, and amenities will
     # be added later
+    bcrypt.init_app(app)
     jwt.init_app(app)
 
     return app

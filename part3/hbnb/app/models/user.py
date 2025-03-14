@@ -66,7 +66,7 @@ class User(BaseModel):
         Hashes the password before storing it.
         """
         from app import bcrypt
-        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+        return bcrypt.generate_password_hash(password).decode('utf-8')
 
     def verify_password(self, password):
         """
