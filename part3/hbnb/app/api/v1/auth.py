@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import create_access_token
-from app.services import facade
+from app.services.facade import HBnBFacade
+facade = HBnBFacade()
 
 api = Namespace('auth', description='Authentication operations')
 
@@ -21,7 +22,6 @@ class Login(Resource):
 
         # Step 1: Retrieve the user based on the provided email
         user = facade.get_user_by_email(credentials['email'])
-        print(user.return_user())
 
         # Step 2: Check if the user exists and the password is correct
         if not user or not user.verify_password(credentials['password']):

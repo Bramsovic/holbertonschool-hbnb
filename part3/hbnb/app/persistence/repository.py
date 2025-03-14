@@ -130,6 +130,7 @@ class InMemoryRepository(Repository):
         return [obj for obj in self._storage.values()
                 if getattr(obj, attr_name, None) == attr_value]
 
+
 class SQLAlchemyRepository(Repository):
     def __init__(self, model):
         self.model = model
