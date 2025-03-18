@@ -11,6 +11,7 @@ from datetime import datetime
 from app.persistence.repository import InMemoryRepository
 from app.persistence.repository import SQLAlchemyRepository
 from app.models.amenity import Amenity
+from app.services.repositories.user_repository import UserRepository
 
 
 class HBnBFacade:
@@ -28,7 +29,7 @@ class HBnBFacade:
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
-        self.user_repo = SQLAlchemyRepository(User)
+        self.user_repo = UserRepository()
 
     def create_user(self, user_data):
         """
@@ -66,7 +67,7 @@ class HBnBFacade:
         Returns:
             User or None: The user instance if found, otherwise None.
         """
-        return self.user_repo.get_by_attribute('email', email)
+        return self.user_repo.get_user_by_email(email)
 
     def update_user(self, user_id, update_data):
         """
