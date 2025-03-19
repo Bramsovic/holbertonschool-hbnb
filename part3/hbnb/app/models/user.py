@@ -116,5 +116,4 @@ class User(BaseModel):
         return bcrypt.check_password_hash(self._password, password)
 
     def __repr__(self):
-        return f"<User(id={self.id}, email={self.email}, is_admin={
-            self.is_admin})>"
+        return f"<User(id={self.id}, email={self.email}, is_admin={self.is_admin})>"

@@ -25,7 +25,6 @@ class HBnBFacade:
         Initializes the Facade with separate InMemoryRepository instances for
         each entity.
         """
-        self.user_repo = InMemoryRepository()
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
