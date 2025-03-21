@@ -42,3 +42,25 @@ CREATE TABLE Place_Amenity (
     FOREIGN KEY (place_id) REFERENCES Place(id) ON DELETE CASCADE,
     FOREIGN KEY (amenity_id) REFERENCES Amenity(id) ON DELETE CASCADE
 );
+
+-- Add admin
+INSERT INTO User (
+	id,
+	first_name,
+	last_name, email,
+	password,
+	is_admin
+	) VALUES 
+('36c9050e-ddd3-4c3b-9731-9f487208bbc1',
+'Admin',
+'HBnB',
+'admin@hbnb.io',
+'$2a$12$VqphMDAkjdN46e8rV4bj9OqaPbbOvlnLW3ss.dEt16MdzbfFN4rTm',
+TRUE
+);
+
+-- Add initial amenities
+INSERT INTO Amenity (id, name) VALUES 
+(daea66ad-eef8-4fa9-9d02-c967f40401c6, 'Wi-Fi'),
+(5a1066e9-5dc4-48f1-ae14-8e7f08f941b1, 'Piscine'),
+(740a98b6-6aae-4e0d-9ab1-9fc7e3223f7f, 'Climatisation');
