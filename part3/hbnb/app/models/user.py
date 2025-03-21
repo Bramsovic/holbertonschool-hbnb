@@ -5,7 +5,7 @@ Module defining the User class for managing user information.
 
 from .base_model import BaseModel
 from datetime import datetime
-from hbnb.app.extensions import bcrypt
+from app.extensions import bcrypt
 
 
 class User(BaseModel):
