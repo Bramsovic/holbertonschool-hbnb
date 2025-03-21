@@ -62,14 +62,23 @@ First, create a virtual environment and install the required dependencies by run
 ```bash
 pip install -r requirements.txt
 ```
-### 2. Run the Application
+
+### 2. Initialization database
+
+For initialize database use the following command and follow the instructions:
+
+'''
+mysql -u your_username -p your_database_name < initialization_database.sql
+'''
+
+### 3. Run the Application
 
 To start the Flask application, run:
 ```
 python run.py
 ```
 
-### 3. Folder Structure Explanation
+### 4. Folder Structure Explanation
 
 - **`app/`**: Contains the core application code.
   - **`api/`**: Houses the API routes, organized by version (v1/).
