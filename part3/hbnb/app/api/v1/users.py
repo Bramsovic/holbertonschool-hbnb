@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services.facade import HBnBFacade
 from app.models.user import User
+from flask_jwt_extended import jwt_required, get_jwt_identity
 facade = HBnBFacade()
 
 
@@ -75,15 +76,49 @@ class UserResource(Resource):
     @api.response(200, 'User successfully updated')
     @api.response(404, 'User not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')
+    @jwt_required()
     def put(self, user_id):
         """Update user details"""
+        current_user = get_jwt_identity()
+        if str(user_id) != str(current_user):
+            return {'error': 'Unauthorized action'}, 403
+        
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
-        updated_user = facade.update_user(user_id, api.payload)
+        
+        data = api.payload
+        if "email" in data or "password" in data:
+            return {'error': 'You cannot modify email or password'}, 400
+        
+        updated_user = facade.update_user(user_id, data)
         return {
             'id': updated_user.id,
             'first_name': updated_user.first_name,
             'last_name': updated_user.last_name,
             'email': updated_user.email
             }, 200
+
+    @api.response(200, 'User successfully deleted')
+    @api.response(404, 'User not found')
+    @api.response(403, 'Unauthorized action')
+    @api.response(500, 'Failed to delete user')
+    @jwt_required()
+    def delete(self, user_id):
+        """Delete a user account"""
+        current_user = get_jwt_identity()
+
+        if str(user_id) != str(current_user):
+            return {'error': 'Unauthorized action'}, 403
+
+        user = facade.get_user(user_id)
+        if not user:
+            return {'error': 'User not found'}, 404
+        
+        deleted = facade.delete_user(user_id)
+        
+        if not deleted:
+            return {'error': 'Failed to delete user'}, 500
+    
+        return {'message': 'User deleted successfully'}, 200
