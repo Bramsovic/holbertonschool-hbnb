@@ -16,7 +16,7 @@ CREATE TABLE Place (
 	latitude FLOAT NOT NULL,
 	longitude FLOAT NOT NULL,
 	owner_id CHAR(36) NOT NULL,
-	FOREYGN KEY (owner_id) REFERENCES User(id) ON DELETE CASCADE
+	FOREIGN KEY (owner_id) REFERENCES User(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Review (
@@ -61,6 +61,6 @@ TRUE
 
 -- Add initial amenities
 INSERT INTO Amenity (id, name) VALUES 
-(daea66ad-eef8-4fa9-9d02-c967f40401c6, 'Wi-Fi'),
-(5a1066e9-5dc4-48f1-ae14-8e7f08f941b1, 'Piscine'),
-(740a98b6-6aae-4e0d-9ab1-9fc7e3223f7f, 'Climatisation');
+('daea66ad-eef8-4fa9-9d02-c967f40401c6', 'Wi-Fi'),
+('5a1066e9-5dc4-48f1-ae14-8e7f08f941b1', 'Piscine'),
+('740a98b6-6aae-4e0d-9ab1-9fc7e3223f7f', 'Climatisation');
