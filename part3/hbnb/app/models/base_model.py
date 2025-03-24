@@ -1,12 +1,24 @@
 import uuid
 from datetime import datetime
+from app.extensions import db
+
 
 
 class BaseModel:
-    def __init__(self):
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+    __abstract__ = True
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", str(uuid.uuid4()))
+        self.created_at = kwargs.get("created_at", datetime.now())
+        self.updated_at = kwargs.get("updated_at", datetime.now())
+
+        for key, value in kwargs.items():
+            if key not in ("id", "created_at", "updated_at"):
+                setattr(self, key, value)
 
     def save(self):
         """Update the updated_at timestamp whenever the object is modified"""

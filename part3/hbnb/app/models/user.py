@@ -3,12 +3,12 @@
 Module defining the User class for managing user information.
 """
 
-from .base_model import BaseModel
+from app.extensions import db, bcrypt
 from datetime import datetime
-from app.extensions import bcrypt
+from .base_model import BaseModel
 
 
-class User(BaseModel):
+class User(BaseModel, db.Model):
     """
     Represents a system user with personal
     information, timestamps, and relationships.
@@ -17,59 +17,41 @@ class User(BaseModel):
         first_name (str): First name of the user.
         last_name (str): Last name of the user.
         email (str): User's email address.
-        is_admin (bool): Indicates whether
-        the user has administrative privileges.
-        places (list): List of places owned by the user.
+        password (str): Hashed password.
+        is_admin (bool): Indicates whether the user has administrative privileges.
     """
+
+    __tablename__ = "users"
+
+    id = db.Column(db.String(60), primary_key=True)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __init__(self, first_name, last_name, email, password, is_admin=False):
         """
         Initializes a new user with a unique ID and personal information.
-
-        Args:
-            first_name (str): First name of the user (max 50 chars).
-            last_name (str): Last name of the user (max 50 chars).
-            email (str): User's email address.
-            is_admin (bool, optional): Indicates if the user
-            is an admin. Defaults to False.
         """
-        super().__init__()  # Call parent to generate UUID & timestamps
-
-        if len(first_name) > 50 or len(last_name) > 50:
-            raise ValueError(
-                "First and last names must be less than 50 characters")
-
+        super().__init__()  # Generates id, created_at, updated_at
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.password = password
         self.is_admin = is_admin
-        self.places = []  # List to store places owned by the user
-
-    def add_place(self, place):
-        """
-        Adds a place to the user's list of places.
-
-        Args:
-            place (Place): The place to be added.
-        """
-        self.places.append(place)
-
-    def update(self):
-        """
-        Updates the `updated_at` timestamp to the current time.
-        """
-        self.updated_at = datetime.utcnow()
 
     @classmethod
-    def hash_password(self, password):
+    def hash_password(cls, raw_password):
         """
         Hashes the password before storing it.
         """
-        return bcrypt.generate_password_hash(password).decode('utf-8')
+        return bcrypt.generate_password_hash(raw_password).decode('utf-8')
 
-    def verify_password(self, password):
+    def verify_password(self, input_password):
         """
         Verifies if the provided password matches the hashed password.
         """
-        return bcrypt.check_password_hash(self.password, password)
+        return bcrypt.check_password_hash(self.password, input_password)

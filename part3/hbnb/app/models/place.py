@@ -1,30 +1,27 @@
 from .base_model import BaseModel
+from app.extensions import db
+from uuid import uuid4
 
-
-class Place(BaseModel):
+class Place(BaseModel, db.Model):
     """Represents a location might be rented"""
 
-    def __init__(self, title, description, price, latitude,
-                 longitude, owner_id):
-        super().__init__()
+    __tablename__ = 'places'
 
-        if len(title) > 100:
-            raise ValueError("Title must be less than 100 characters")
-        if price <= 0:
-            raise ValueError("Price must be positive")
-        if not (-90 <= latitude <= 90):
-            raise ValueError("Latitude must be between -90 and 90")
-        if not (-180 <= longitude <= 180):
-            raise ValueError("Longitude must be between -180 and 180")
+    id = db.Column(db.String(60), primary_key=True, default=lambda: str(uuid4()))
+    title = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    number_rooms = db.Column(db.Integer, nullable=False)
+    number_bathrooms = db.Column(db.Integer, nullable=False)
+    max_guest = db.Column(db.Integer, nullable=False)
+    price_by_night = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    owner_id = db.Column(db.String(60), db.ForeignKey('users.id'), nullable=False)
 
-        self.title = title
-        self.description = description
-        self.price = price
-        self.latitude = latitude
-        self.longitude = longitude
-        self.owner_id = owner_id
-        self.reviews = []  # List to store related reviews
-        self.amenities = []  # List to store related amenities
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def add_review(self, review):
         """Add an review to the list of place reviews"""

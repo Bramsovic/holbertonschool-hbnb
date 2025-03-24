@@ -1,19 +1,12 @@
-#!/usr/bin/env python3
-"""
-Module defining the UserRepository class for
-managing user storage and retrieval.
-"""
-
 from datetime import datetime
 from abc import ABC, abstractmethod
-from app import db
-
+from app.extensions import db 
+from app.models.user import User
+from app.models.amenity import Amenity
+from app.models.place import Place
+from app.models.review import Review
 
 class Repository(ABC):
-    """
-    Abstract Base Class for a generic repository.
-    """
-
     @abstractmethod
     def add(self, obj):
         pass
@@ -24,7 +17,7 @@ class Repository(ABC):
 
     @abstractmethod
     def get_all(self):
-        pass
+        return self.model.query.all()
 
     @abstractmethod
     def update(self, obj_id, data):
@@ -37,99 +30,6 @@ class Repository(ABC):
     @abstractmethod
     def get_by_attribute(self, attr_name, attr_value):
         pass
-
-
-class InMemoryRepository(Repository):
-    """
-    Concrete implementation of the Repository class for storing
-    and managing User instances in-memory.
-    """
-
-    def __init__(self):
-        """
-        Initializes an empty in-memory user repository.
-        """
-        self._storage = {}
-
-    def add(self, user):
-        """
-        Adds a user to the repository.
-
-        Args:
-            user (User): The user instance to be added.
-        """
-        self._storage[user.id] = user
-
-    def get(self, user_id):
-        """
-        Retrieves a user by their unique ID.
-
-        Args:
-            user_id (str): The unique identifier of the user.
-
-        Returns:
-            User or None: The user instance if found, otherwise None.
-        """
-        return self._storage.get(user_id)
-
-    def get_all(self):
-        """
-        Retrieves all users from the repository.
-
-        Returns:
-            list: A list of all User instances.
-        """
-        return list(self._storage.values())
-
-    def update(self, user_id, data):
-        """
-        Updates an existing user in the repository.
-
-        Args:
-            user_id (str): The unique identifier of the user to update.
-            data (dict): Dictionary containing updated attributes.
-
-        Returns:
-            User or None: The updated user instance if found, otherwise None.
-        """
-        user = self.get(user_id)
-        if user:
-            for key, value in data.items():
-                if hasattr(user, key):
-                    setattr(user, key, value)
-            user.updated_at = datetime.utcnow()
-            return user
-        return None
-
-    def delete(self, user_id):
-        """
-        Deletes a user from the repository.
-
-        Args:
-            user_id (str): The unique identifier of the user.
-
-        Returns:
-            bool: True if the user was deleted, False otherwise.
-        """
-        if user_id in self._storage:
-            del self._storage[user_id]
-            return True
-        return False
-
-    def get_by_attribute(self, attr_name, attr_value):
-        """
-        Retrieves a user by a specific attribute.
-
-        Args:
-            attr_name (str): The attribute name to search by.
-            attr_value (str): The attribute value to search for.
-
-        Returns:
-            User or None: The user instance if found, otherwise None.
-        """
-        return [obj for obj in self._storage.values()
-                if getattr(obj, attr_name, None) == attr_value]
-
 
 class SQLAlchemyRepository(Repository):
     def __init__(self, model):
@@ -151,12 +51,54 @@ class SQLAlchemyRepository(Repository):
             for key, value in data.items():
                 setattr(obj, key, value)
             db.session.commit()
+            return obj
+        return None
 
     def delete(self, obj_id):
         obj = self.get(obj_id)
         if obj:
             db.session.delete(obj)
             db.session.commit()
+            return True
+        return False
 
     def get_by_attribute(self, attr_name, attr_value):
         return self.model.query.filter_by(**{attr_name: attr_value}).first()
+
+# Specific repositories
+user_repository = SQLAlchemyRepository(User)
+amenity_repository = SQLAlchemyRepository(Amenity)
+place_repository = SQLAlchemyRepository(Place)
+review_repository = SQLAlchemyRepository(Review)
+
+# User methods
+def create_user(data):
+    new_user = User(
+        email=data.get("email"),
+        first_name=data.get("first_name"),
+        last_name=data.get("last_name"),
+        password=data.get("password"),
+        is_admin=data.get("is_admin", False)
+    )
+    user_repository.add(new_user)
+    return new_user
+
+def update_user(user_id, data):
+    return user_repository.update(user_id, data)
+
+# Amenity methods
+def create_amenity(data):
+    new_amenity = Amenity(name=data.get("name"))
+    amenity_repository.add(new_amenity)
+    return new_amenity
+
+def update_amenity(amenity_id, data):
+    return amenity_repository.update(amenity_id, data)
+
+# Place methods
+def update_place(place_id, data):
+    return place_repository.update(place_id, data)
+
+# Review methods
+def update_review(review_id, data):
+    return review_repository.update(review_id, data)
