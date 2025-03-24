@@ -1,5 +1,8 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required
+from flask import request
+from app.services.auth_utils import admin_required
 
 api = Namespace('amenities', description='Amenity operations')
 
@@ -10,7 +13,6 @@ amenity_model = api.model('Amenity', {
         max_length=50
     )
 })
-
 
 @api.route('/')
 class AmenityList(Resource):
@@ -91,6 +93,8 @@ class AmenityResource(Resource):
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
+    @admin_required
     def put(self, amenity_id):
         """
         Update amenity details by ID.
@@ -118,3 +122,44 @@ class AmenityResource(Resource):
                 "id": amenity.id,
                 "name": amenity.name
             }, 200
+        
+    @jwt_required()
+    @admin_required
+    def delete(self, amenity_id):
+        """Delete an amenity by ID"""
+        deleted = facade.delete_amenity(amenity_id)
+        if deleted:
+            return {'message': 'Amenity deleted successfully'}, 200
+        return {'error': 'Amenity not found'}, 404
+
+# ---------------------- Admin Routes ----------------------
+
+@api.route('/admin')
+class AdminAmenityCreate(Resource):
+    @jwt_required()
+    @admin_required
+    def post(self):
+        """Admin: Add a new amenity"""
+        data = request.json
+        if not data or not data.get("name"):
+            return {"error": "Invalid input data"}, 400
+
+        existing = [a for a in facade.get_all_amenities() if a.name.lower() == data["name"].lower()]
+        if existing:
+            return {"error": "Amenity already exists"}, 400
+
+        amenity = facade.create_amenity_admin(data)
+        return {"id": amenity.id, "name": amenity.name}, 201
+
+@api.route('/admin/<string:amenity_id>')
+class AdminAmenityUpdate(Resource):
+    @jwt_required()
+    @admin_required
+    def put(self, amenity_id):
+        """Admin: Update an amenity"""
+        data = request.json
+        updated = facade.update_amenity_admin(amenity_id, data)
+        if not updated:
+            return {"error": "Amenity not found"}, 404
+
+        return {"message": "Amenity updated successfully"}

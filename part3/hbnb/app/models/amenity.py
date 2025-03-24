@@ -1,9 +1,15 @@
 from .base_model import BaseModel
 from datetime import datetime, timezone
+from app.extensions import db
 
 
-class Amenity(BaseModel):
+class Amenity(BaseModel, db.Model):
     """Represent an amenity of a place"""
+   
+    __tablename__ = 'amenities'
+
+    id = db.Column(db.String(60), primary_key=True)
+    name = db.Column(db.String(128), nullable=False, unique=True)
 
     def __init__(self, name):
         super().__init__()
