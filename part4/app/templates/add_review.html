@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajouter un avis</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="icon.png">
+</head>
+<body>
+  <header>
+    <img src="Image_2-removebg-preview.png" alt="Logo" class="logo">
+    <a href="login.html" class="login-button">Connexion</a>
+  </header>
+
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="login.html">Connexion</a>
+  </nav>
+
+  <main>
+    <section class="add-review">
+      <form id="review-form" class="form">
+        <h2>Ajouter un avis</h2>
+        <label for="review">Votre avis :</label>
+        <textarea id="review" name="review" required></textarea>
+        
+        <label for="rating">Note :</label>
+        <select id="rating" name="rating" required>
+          <option value="" disabled selected>Choisissez une note</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+        
+        <button type="submit">Envoyer</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 - Tous droits réservés</p>
+  </footer>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
